@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+   <bean id="heloworldmessage" class=" enablement.spring.core.heloworld.HeloWorld">
+       <property name="message" value="Hello World !!"/>
+   </bean>
+   
+   <bean id="heloworldmessageConstruct" class=" enablement.spring.core.heloworld.HeloWorld">
+     <constructor-arg index="0" value = "Hello Hello World !!" type="java.lang.String"/>
+   </bean>
+
+   <!-- Using inner bean -->
+   <bean id = "textEditor" class = "enablement.spring.core.innerbean.TextEditor">
+      <property name = "spellChecker">
+         <bean id = "spellChecker" class = "enablement.spring.core.innerbean.SpellChecker"/>
+      </property>
+   </bean>
+   
+   <!--  Java Collection - List  -->
+    <bean id="javaCollection" class="enablement.spring.core.injectingcollection.Question">
+	<constructor-arg value="1"></constructor-arg>
+	<constructor-arg value="What is java?"></constructor-arg>
+	<constructor-arg>
+		<list>
+			<value>Java is a programming language</value>
+			<value>Java is a Platform</value>
+			<value>Java is an Island of Indonasia</value>
+		</list>
+	</constructor-arg>
+  </bean>  
+  
+   <!-- START: Autowiring example  -->
+  <bean id="department" class="enablement.spring.core.autowire.Department">
+        <property name="deptName" value="Information Technology" />
+  </bean>
+  <bean id="employeeByName" class="enablement.spring.core.autowire.Employee" autowire="byName"></bean>
+  <bean id="employeeByType" class="enablement.spring.core.autowire.Employee" autowire="byType"></bean>
+  <bean id="employeeConstructor" class="enablement.spring.core.autowire.Employee" autowire="constructor"></bean>
+   <!-- END: Autowiring example  -->
+   
+   <!-- START: MySql configuration  -->
+   <!-- The DriverManagerDataSource is used to contain the information about the database 
+   such as driver class name, connnection URL, username and password. -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+	
+		<property name="url" value="jdbc:mysql://localhost:3306/rosdb?useSSL=false&amp;useLegacyDatetimecode=false" />
+		<!--  
+		<property name="username" value="root" />
+		<property name="password" value="amir" /> 
+		-->
+		<!-- Read from "db-credentials.properties" using PropertyPlaceholderConfigurer  -->
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+    </bean>
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<bean id="edao" class="enablement.spring.core.jdbctemplate.EmployeeDetailDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+	</bean>
+   <!-- END: MySql configuration  -->
+   
+   <!-- To implement the life cycle of a bean via init and destroy -->
+   <!-- 
+   <beans> 
+    	<bean id="hw" class="enablement.spring.core.beanlifecycle.BeanLifecycleInitDestroy" 
+    	  init-method="init" destroy-method="destroy"/> 
+   </beans> -->
+   
+    <!-- To implement the life cycle of a bean via init and destroy, using annotation -->
+	<!-- activate the @PostConstruct and  @PreDestroy annotation -->
+   <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/> 
+   <bean id="hw" class="enablement.spring.core.beanlifecycle.BeanLifeCycleUsingAnnotation"/> 
+   
+   <!--  To externalize property value in external file -->
+   <bean  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" value="classpath:db-credentials.properties" />
+    </bean>
+	
+   
+</beans>
